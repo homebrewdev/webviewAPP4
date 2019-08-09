@@ -11,31 +11,51 @@ import UIKit
 class MenuVC: UIViewController {
 
     @IBOutlet weak var slideView: UIView!
+    // Gesture Recognizers
+    @IBOutlet var swipeLeftGS: UISwipeGestureRecognizer!
+    @IBOutlet var swipeRightGS: UISwipeGestureRecognizer!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         populateMenu()
-    }
-    
-    @IBAction func hideSlideMenuButton(_ sender: UIButton) {
-        hideMenu()
+        //enableSlideMenuSwipe()
     }
     
     // скрыть меню
     func hideMenu() {
-        //slideView.removeFromSuperview()
-        UIView.animate(withDuration: 1.0, animations: {
-            self.view.frame = CGRect(x: -UIScreen.main.bounds.width, y: 44, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height-44)
+        
+        UIView.animate(withDuration: 0.75, animations: {
+            self.view.frame = CGRect(x: -UIScreen.main.bounds.width, y: 44,
+                                     width: UIScreen.main.bounds.width,
+                                     height: UIScreen.main.bounds.height-44)
         }) { (finished) in
             //self.slideView.removeFromSuperview()
             self.view.removeFromSuperview()
             AppDelegate.isMenuVC = true
         }
     }
+    
+    // показать меню
+    func showMenu() {
+        // анимашка всплывания вправо с 1 секундой
+        UIView.animate(withDuration: 0.75) {
+            self.slideView.frame = CGRect(x: 0, y: 44,
+                                            width: self.view.bounds.width,
+                                            height: self.view.bounds.height - 44)
+            self.view.addSubview(self.slideView)
+            //self.addChild(self.menuVC)
+            //self.view.addSubview(self.menuVC.view)
+            // заполняем кнопками менюшку
+            self.populateMenu()
+            AppDelegate.isMenuVC = false // слайд меню активно выкатилось
+        }
+    }
 
     // наполняем меню кнопками (элементами)
     func populateMenu() {
-        let manualConstraint = ((Int(slideView.bounds.width) - 200) / 2)
+        let manualConstraintLeftRight = ((Int(slideView.bounds.width) - 200) / 2)
+        let manualWidthCustomButton = ((Int(slideView.bounds.width) - 64))
         let slideMenuBtn1 = UIButton()
         slideMenuBtn1.setTitle("First option", for: .normal)
         slideMenuBtn1.setTitleColor(UIColor.black, for: .normal)
@@ -44,7 +64,10 @@ class MenuVC: UIViewController {
         slideMenuBtn1.clipsToBounds = true
         slideMenuBtn1.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         slideMenuBtn1.tag = 1
-        slideMenuBtn1.frame = CGRect(x: manualConstraint, y: 64, width: 200, height: 32)
+        slideMenuBtn1.frame = CGRect(x: manualConstraintLeftRight,
+                                     y: 64,
+                                     width: manualWidthCustomButton,
+                                     height: 32)
         
         slideView.addSubview(slideMenuBtn1)
         
@@ -56,7 +79,10 @@ class MenuVC: UIViewController {
         slideMenuBtn2.clipsToBounds = true
         slideMenuBtn2.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
         slideMenuBtn2.tag = 2
-        slideMenuBtn2.frame = CGRect(x: manualConstraint, y: 112, width: 200, height: 32)
+        slideMenuBtn2.frame = CGRect(x: manualConstraintLeftRight,
+                                     y: 112,
+                                     width: manualWidthCustomButton,
+                                     height: 32)
         
         slideView.addSubview(slideMenuBtn2)
     }
@@ -95,4 +121,50 @@ class MenuVC: UIViewController {
         super.viewDidLayoutSubviews()
          print("Autolayout - viewDidLayoutSubviews")
     }
+    
+//    func enableSlideMenuSwipe() {
+//
+//        let swipeRight = UISwipeGestureRecognizer(target: self, action: Selector(("respondToSwipeGesture:")))
+//        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+//        self.slideView.addGestureRecognizer(swipeRight)
+//
+//        let swipeLeft = UISwipeGestureRecognizer(target: self, action: Selector(("respondToSwipeGesture:")))
+//        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
+//        self.slideView.addGestureRecognizer(swipeLeft)
+//
+//    }
+//
+//
+//    func respondToSwipeGesture(gesture: UIGestureRecognizer)
+//    {
+//        if let swipeGesture = gesture as? UISwipeGestureRecognizer
+//        {
+//            switch swipeGesture.direction
+//            {
+//            case UISwipeGestureRecognizer.Direction.right:
+//                //write your logic for right swipe
+//                print("Swiped right")
+//
+//            case UISwipeGestureRecognizer.Direction.left:
+//                //write your logic for left swipe
+//                print("Swiped left")
+//
+//            default:
+//                break
+//            }
+//        }
+//    }
+    // реализация по свайпам влево и вправо
+    @IBAction func swipeLeftSlideMenu(_ sender: UISwipeGestureRecognizer) {
+//        if AppDelegate.isMenuVC {
+//            hideMenu()
+//        }
+        hideMenu()
+        print("Swiped left")
+    }
+    
+    @IBAction func swipeRightSlideMenu(_ sender: UISwipeGestureRecognizer) {
+        print("Swiped right")
+    }
+    
 }
